@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Love 3D</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* Hiệu ứng nền vũ trụ sâu thẳm */
+            background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+
+        /* Tạo các vì sao lấp lánh */
+        .stars {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 4s infinite linear;
+            z-index: 0;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        /* Khung chứa hiệu ứng 3D */
+        .gallery-container {
+            position: relative;
+            width: 200px;
+            height: 300px;
+            transform-style: preserve-3d;
+            animation: rotateGallery 25s linear infinite;
+            z-index: 2;
+            margin-top: -50px;
+        }
+
+        @keyframes rotateGallery {
+            0% { transform: perspective(1000px) rotateY(0deg); }
+            100% { transform: perspective(1000px) rotateY(360deg); }
+        }
+
+        /* Cấu hình cho 10 ảnh (360 / 10 = 36 độ) */
+        .gallery-container span {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: center;
+            transform: rotateY(calc(var(--i) * 36deg)) translateZ(350px);
+            /* Nếu muốn vòng tròn rộng hơn, hãy tăng số 350px lên */
+        }
+
+        .gallery-container span img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), 0 0 40px rgba(255, 0, 255, 0.4);
+            /* Hiệu ứng phát sáng vũ trụ cho từng ảnh */
+        }
+
+        /* Phần Text Lời chúc */
+        .message-box {
+            position: absolute;
+            bottom: 50px;
+            text-align: center;
+            z-index: 3;
+            width: 80%;
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .message-box h2 {
+            color: #ff9a9e;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #ff9a9e;
+        }
+
+        .message-box p {
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        /* Ẩn thanh audio mặc định nếu muốn nó tự chạy ngầm */
+        audio {
+            position: absolute;
+            bottom: 10px;
+            z-index: 4;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+        audio:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+
+    <div class="gallery-container">
+        <span style="--i:1;"><img src="https://via.placeholder.com/200x300/111/fff?text=Anh+1" alt="Ảnh 1"></span>
+        <span style="--i:2;"><img src="https://via.placeholder.com/200x300/222/fff?text=Anh+2" alt="Ảnh 2"></span>
+        <span style="--i:3;"><img src="https://via.placeholder.com/200x300/333/fff?text=Anh+3" alt="Ảnh 3"></span>
+        <span style="--i:4;"><img src="https://via.placeholder.com/200x300/444/fff?text=Anh+4" alt="Ảnh 4"></span>
+        <span style="--i:5;"><img src="https://via.placeholder.com/200x300/555/fff?text=Anh+5" alt="Ảnh 5"></span>
+        <span style="--i:6;"><img src="https://via.placeholder.com/200x300/666/fff?text=Anh+6" alt="Ảnh 6"></span>
+        <span style="--i:7;"><img src="https://via.placeholder.com/200x300/777/fff?text=Anh+7" alt="Ảnh 7"></span>
+        <span style="--i:8;"><img src="https://via.placeholder.com/200x300/888/fff?text=Anh+8" alt="Ảnh 8"></span>
+        <span style="--i:9;"><img src="https://via.placeholder.com/200x300/999/fff?text=Anh+9" alt="Ảnh 9"></span>
+        <span style="--i:10;"><img src="https://via.placeholder.com/200x300/aaa/fff?text=Anh+10" alt="Ảnh 10"></span>
+    </div>
+
+    <div class="message-box">
+        <h2>Gửi Thảo xinh,</h2>
+        <p>Chúc cậu luôn vui vẻ, rạng rỡ và ngập tràn hạnh phúc. Cứ mãi xinh xắn và tỏa sáng theo cách của riêng mình nha! ❤️</p>
+    </div>
+
+    <audio autoplay loop controls>
+        <source src="a.mp3" type="audio/mpeg">
+        Trình duyệt của bạn không hỗ trợ thẻ audio.
+    </audio>
+
+</body>
+</html>
