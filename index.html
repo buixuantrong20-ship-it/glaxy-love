@@ -41,7 +41,9 @@
         
         /* Dải ngân hà chứa ảnh */
         #galaxy { 
-            position: absolute; width: 0; height: 0; transform-style: preserve-3d; 
+            position: absolute; 
+            top: 50%; left: 50%; /* Dòng thần thánh kéo ảnh ra giữa màn hình */
+            width: 0; height: 0; transform-style: preserve-3d; 
             animation: spinGalaxy 35s linear infinite; z-index: 3; 
         }
         
@@ -77,7 +79,7 @@
 
     <div id="ui-layer">
         <img id="image" class="main-gif" src="https://media.tenor.com/ZhmAh5s0qHEAAAAi/peach-goma.gif" alt="Cute Cat">
-        <h1 id="text">Thảo có muốn nhận quà 8/3 của tớ không nè? 🎁</h1>
+        <h1 id="text">Thảo có muốn nhận quà  của tớ không nè? 🎁</h1>
         <div class="btn-group">
             <button id="btnYes">Cóooooo ❤️</button>
             <button id="btnNo">Không thèm 😝</button>
