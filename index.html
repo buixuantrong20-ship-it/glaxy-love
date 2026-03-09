@@ -3,76 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galaxy Love 3D</title>
+    <title>Gửi Thảo xinh ❤️</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; overflow: hidden;
-            background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
-            font-family: 'Segoe UI', Tahoma, sans-serif; color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fce4ec; /* Nền lúc đầu màu hồng */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            text-align: center;
+            transition: background 2s ease; /* Hiệu ứng chuyển màu nền mượt mà */
         }
-        .stars {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
-            background-repeat: repeat; background-size: 200px 200px;
-            animation: twinkle 4s infinite linear; z-index: 0;
+
+        /* Khi bấm "Có", body sẽ được thêm class này để biến thành không gian */
+        body.space-mode {
+            background: radial-gradient(circle at center, #16222a 0%, #000000 100%);
+            color: white;
         }
-        @keyframes twinkle { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-        
-        .gallery-container {
-            position: relative; width: 200px; height: 300px;
+
+        #ui-layer {
+            position: relative;
+            z-index: 10;
+            transition: transform 1s, opacity 1s;
+        }
+
+        img.main-gif {
+            width: 250px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: 1s;
+        }
+
+        h1 {
+            color: #d81b60;
+            font-size: 2em;
+            margin-bottom: 30px;
+            padding: 0 20px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.8);
+            transition: color 2s;
+        }
+        body.space-mode h1 { color: #ff9a9e; }
+
+        .btn-group {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #btnYes {
+            background-color: #ff4081;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        #btnNo {
+            background-color: #fff;
+            color: #d81b60;
+            border: 2px solid #d81b60;
+            position: relative;
+        }
+
+        /* ================= HIỆU ỨNG THIÊN HÀ 3D ================= */
+        #universe {
+            position: absolute;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            perspective: 1000px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 3s ease;
+            z-index: 1;
+        }
+
+        #galaxy {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0; /* Tâm quay */
             transform-style: preserve-3d;
-            animation: rotateGallery 20s linear infinite; z-index: 2; margin-top: -50px;
+            animation: spinGalaxy 40s linear infinite;
         }
-        @keyframes rotateGallery {
-            0% { transform: perspective(1000px) rotateY(0deg); }
-            100% { transform: perspective(1000px) rotateY(360deg); }
+
+        @keyframes spinGalaxy {
+            0% { transform: rotateX(-15deg) rotateY(0deg); }
+            100% { transform: rotateX(-15deg) rotateY(360deg); }
         }
-        
-        /* Cấu hình lại góc xoay cho 6 ảnh (360 độ / 6 = 60 độ) */
-        .gallery-container span {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            transform-origin: center;
-            transform: rotateY(calc(var(--i) * 60deg)) translateZ(250px);
+
+        /* Hành tinh phát sáng ở giữa */
+        .planet {
+            position: absolute;
+            top: -75px; left: -75px;
+            width: 150px; height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #e1bee7, #7b1fa2);
+            box-shadow: 0 0 50px #e1bee7, 0 0 100px #7b1fa2;
         }
-        .gallery-container span img {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; border-radius: 15px; border: 3px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), 0 0 40px rgba(255, 0, 255, 0.4);
+
+        /* Các ảnh nhỏ bay xung quanh */
+        .star-img {
+            position: absolute;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            object-fit: cover;
+            /* Viền trắng mỏng cho giống Polaroid */
+            border: 2px solid rgba(255,255,255,0.8); 
         }
-        .message-box {
-            position: absolute; bottom: 50px; text-align: center; z-index: 3;
-            width: 80%; max-width: 600px; background: rgba(0, 0, 0, 0.4);
-            padding: 20px; border-radius: 15px; backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .message-box h2 { color: #ff9a9e; margin-bottom: 10px; text-shadow: 0 0 10px #ff9a9e; }
-        .message-box p { line-height: 1.6; font-size: 16px; }
-        audio { position: absolute; bottom: 10px; z-index: 4; opacity: 0.5; transition: opacity 0.3s; }
-        audio:hover { opacity: 1; }
+
     </style>
 </head>
 <body>
-    <div class="stars"></div>
-    <div class="gallery-container">
-        <span style="--i:1;"><img src="1.jpg.png" alt="Ảnh 1"></span>
-       
-        <span style="--i:3;"><img src="3.jpg.png" alt="Ảnh 3"></span>
-        <span style="--i:4;"><img src="4.jpg.png" alt="Ảnh 4"></span>
-        <span style="--i:5;"><img src="5.jpg" alt="Ảnh 5"></span>
-        <span style="--i:6;"><img src="6.jpg" alt="Ảnh 6"></span>
+
+    <div id="universe">
+        <div id="galaxy">
+            <div class="planet"></div>
+            </div>
     </div>
-    <div class="message-box">
-        <h2>Gửi Thảo xinh,</h2>
-        <p>Chúc cậu luôn vui vẻ, rạng rỡ và ngập tràn hạnh phúc. Cứ mãi xinh xắn và tỏa sáng theo cách của riêng mình nha! ❤️</p>
+
+    <div id="ui-layer">
+        <img id="image" class="main-gif" src="https://media.tenor.com/ZhmAh5s0qHEAAAAi/peach-goma.gif" alt="Cute Cat">
+        <h1 id="text">Thảo có muốn nhận quà 8/3 của tớ không nè? 🎁</h1>
+        <div class="btn-group">
+            <button id="btnYes">Cóooooo ❤️</button>
+            <button id="btnNo">Không thèm 😝</button>
+        </div>
     </div>
-    <audio autoplay loop controls>
+
+    <audio id="myAudio" loop>
         <source src="nhac.mp3" type="audio/mpeg">
     </audio>
+
+    <script>
+        const btnYes = document.getElementById('btnYes');
+        const btnNo = document.getElementById('btnNo');
+        const text = document.getElementById('text');
+        const image = document.getElementById('image');
+        const audio = document.getElementById('myAudio');
+        const universe = document.getElementById('universe');
+        const galaxy = document.getElementById('galaxy');
+        
+        let yesSize = 20; let paddingV = 15; let paddingH = 30;
+
+        // 1. Nút Không bỏ chạy
+        function moveNoButton() {
+            btnNo.style.position = 'absolute';
+            const maxX = window.innerWidth - btnNo.clientWidth - 50;
+            const maxY = window.innerHeight - btnNo.clientHeight - 50;
+            const randomX = Math.max(20, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(20, Math.floor(Math.random() * maxY));
+            
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+
+            yesSize += 8; paddingV += 4; paddingH += 8;
+            btnYes.style.fontSize = yesSize + 'px';
+            btnYes.style.padding = paddingV + 'px ' + paddingH + 'px';
+        }
+
+        btnNo.addEventListener('mouseover', moveNoButton);
+        btnNo.addEventListener('touchstart', moveNoButton);
+
+        // 2. Tạo hiệu ứng Thiên Hà khi bấm "Có"
+        btnYes.addEventListener('click', () => {
+            // Đổi chữ và ảnh
+            text.innerHTML = "Chúc Thảo 8/3 luôn vui vẻ, rạng rỡ và ngập tràn hạnh phúc. Tỏa sáng như một thiên hà nhé! 🥰";
+            image.src = "https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif"; 
+            image.style.boxShadow = "0 0 30px #ff4081"; // Thêm phát sáng cho ảnh gấu
+            
+            // Giấu 2 nút
+            document.querySelector('.btn-group').style.display = 'none';
+            
+            // Bật nhạc
+            audio.play();
+
+            // KÍCH HOẠT CHẾ ĐỘ VŨ TRỤ
+            document.body.classList.add('space-mode');
+            universe.style.opacity = '1';
+
+            // Tạo hàng trăm bức ảnh nhỏ xoay quanh
+            createGalaxyImages();
+        });
+
+        function createGalaxyImages() {
+            // Danh sách ảnh đúng tên bạn đã up
+            const imgSrcs = ['1.jpg.png', '2.jpg.png', '3.jpg.png', '4.jpg.png', '5.jpg', '6.jpg'];
+            const totalImages = 150; // Tổng số ảnh nhỏ muốn tạo (càng nhiều càng đẹp nhưng 150 là mượt nhất)
+
+            for(let i = 0; i < totalImages; i++) {
+                let img = document.createElement('img');
+                img.src = imgSrcs[i % imgSrcs.length]; // Lặp lại tuần tự 6 ảnh
+                img.className = 'star-img';
+
+                // Kích thước ngẫu nhiên (ảnh to ảnh nhỏ)
+                let size = Math.random() > 0.8 ? 70 : (Math.random() > 0.5 ? 50 : 35);
+                img.style.width = size + 'px';
+                img.style.height = (size * 1.2) + 'px'; 
+                
+                // Căn tâm cho ảnh
+                img.style.marginLeft = -(size/2) + 'px';
+                img.style.marginTop = -(size/2) + 'px';
+
+                // Thuật toán trải đều ảnh thành một dải ngân hà
+                let angle = Math.random() * 360; // Góc xoay
+                let radius = 200 + Math.random() * 400; // Bán kính (cách tâm từ 200 đến 600px)
+                let height = (Math.random() - 0.5) * 200; // Độ dày của vành đai
+
+                // Thêm độ nghiêng lộn xộn cho từng ảnh để trông tự nhiên
+                let tiltX = (Math.random() - 0.5) * 60;
+                let tiltY = (Math.random() - 0.5) * 60;
+
+                // Áp dụng vị trí 3D
+                img.style.transform = `rotateY(${angle}deg) translateZ(${radius}px) translateY(${height}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+
+                galaxy.appendChild(img);
+            }
+        }
+    </script>
 </body>
 </html>
