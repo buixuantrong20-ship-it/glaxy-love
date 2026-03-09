@@ -17,34 +17,40 @@
         /* Nền vũ trụ */
         body.space-mode { background: radial-gradient(circle at center, #11001c 0%, #000000 100%); color: white; }
         
+        /* CHỐNG ĐÈ NÚT - ÉP KHUNG UI LÊN TRÊN CÙNG */
         #ui-layer {
-            position: relative; z-index: 100; padding: 40px; background: rgba(255, 255, 255, 0.4);
+            position: relative; z-index: 99999; padding: 40px; background: rgba(255, 255, 255, 0.4);
             border-radius: 30px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.6);
             box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: opacity 1s;
         }
-        img.main-gif { width: 220px; border-radius: 20px; margin-bottom: 25px; border: 3px solid white; }
-        h1 { color: #d81b60; font-size: 2em; margin-bottom: 35px; }
+        img.main-gif { width: 220px; border-radius: 20px; margin-bottom: 25px; border: 3px solid white; pointer-events: none; }
+        h1 { color: #d81b60; font-size: 2em; margin-bottom: 35px; pointer-events: none; }
         
-        .btn-group { display: flex; justify-content: center; gap: 25px; }
+        .btn-group { display: flex; justify-content: center; gap: 25px; position: relative; z-index: 100000; }
         button { padding: 18px 40px; font-size: 19px; font-weight: 600; border: none; border-radius: 50px; cursor: pointer; transition: 0.2s; }
-        #btnYes { background: linear-gradient(135deg, #ff4081 0%, #ff80ab 100%); color: white; z-index: 999; box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4); }
-        #btnNo { background-color: rgba(255, 255, 255, 0.6); color: #d81b60; border: 2px solid rgba(216, 27, 96, 0.5); z-index: 1000; }
+        
+        /* ÉP Z-INDEX CAO CHÓT VÓT CHO 2 NÚT NÀY */
+        #btnYes { position: relative; background: linear-gradient(135deg, #ff4081 0%, #ff80ab 100%); color: white; z-index: 999999; box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4); }
+        #btnNo { position: relative; background-color: rgba(255, 255, 255, 0.6); color: #d81b60; border: 2px solid rgba(216, 27, 96, 0.5); z-index: 1000000; }
 
-        /* LỚP VŨ TRỤ */
+        /* LỚP VŨ TRỤ CHỨA 3D */
         #universe {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-            perspective: 1200px; opacity: 0; pointer-events: none; transition: opacity 2s ease; z-index: 1;
+            perspective: 1200px; opacity: 0; transition: opacity 2s ease; z-index: 1;
+            pointer-events: none; /* TRÓI THẰNG 3D LẠI KHÔNG CHO CƯỚP CLICK */
         }
         
-        /* Quả cầu hạt bụi 3D */
-        #particleCanvas { position: absolute; top: 0; left: 0; z-index: 2; pointer-events: auto; }
+        /* Chỉ thả xích cho 3D hoạt động khi màn hình vũ trụ bật lên */
+        body.space-mode #universe { pointer-events: auto; } 
+
+        #particleCanvas { position: absolute; top: 0; left: 0; z-index: 2; }
         
-        /* DẢI NGÂN HÀ ẢNH (Đã fix lỗi căn giữa ở đây) */
+        /* DẢI NGÂN HÀ ẢNH ĐÃ ĐƯỢC KÉO RA GIỮA MÀN HÌNH */
         #galaxy { 
             position: absolute; 
-            top: 50%; left: 50%; /* Dòng kéo toàn bộ ảnh ra giữa màn hình */
+            top: 50%; left: 50%; 
             width: 0; height: 0; transform-style: preserve-3d; 
-            animation: spinGalaxy 35s linear infinite; z-index: 3; 
+            animation: spinGalaxy 35s linear infinite; z-index: 3; pointer-events: none;
         }
         
         @keyframes spinGalaxy { 
@@ -52,20 +58,20 @@
             100% { transform: rotateX(-10deg) rotateY(360deg); } 
         }
         
-        /* ẢNH CỦA THẢO (Đã làm to ra 80x110 giống ảnh mẫu) */
+        /* ẢNH ĐÃ LÀM TO RA (80x110) */
         .star-img { 
             position: absolute; border-radius: 8px; object-fit: cover; 
             border: 3px solid rgba(255,255,255,0.8); 
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
             width: 80px; height: 110px; 
-            margin-left: -40px; margin-top: -55px; /* Ép tâm chuẩn để xoay không bị giật */
+            margin-left: -40px; margin-top: -55px; pointer-events: none;
         }
 
         /* Chữ chạy dưới đáy */
         #marquee-text {
             position: absolute; bottom: 20px; width: 100%; text-align: center;
             font-size: 22px; font-weight: 600; color: #ff9a9e; opacity: 0; transition: 2s;
-            text-shadow: 0 0 10px rgba(255, 154, 158, 0.8); z-index: 10;
+            text-shadow: 0 0 10px rgba(255, 154, 158, 0.8); z-index: 10; pointer-events: none;
         }
     </style>
 </head>
@@ -104,7 +110,7 @@
         const marqueeText = document.getElementById('marquee-text');
         const canvas = document.getElementById('particleCanvas');
 
-        let scene, camera, renderer, controls, spherePoints, ringPoints;
+        let scene, camera, renderer, controls, spherePoints;
 
         // Bật nhạc
         let isMusicPlaying = false;
@@ -114,10 +120,11 @@
             }
         }
         document.body.addEventListener('click', startMusic);
-        document.body.addEventListener('touchstart', startMusic);
+        document.body.addEventListener('touchstart', startMusic, {passive: true});
 
         // Nút chạy
-        function moveNoButton() {
+        function moveNoButton(e) {
+            if(e) e.preventDefault();
             startMusic();
             btnNo.style.position = 'fixed';
             const maxX = window.innerWidth - btnNo.clientWidth - 20;
@@ -128,10 +135,10 @@
             let currentSize = parseInt(window.getComputedStyle(btnYes).fontSize);
             btnYes.style.fontSize = (currentSize + 2) + 'px';
         }
-        btnNo.onmouseover = moveNoButton;
-        btnNo.ontouchstart = moveNoButton;
+        btnNo.addEventListener('mouseover', moveNoButton);
+        btnNo.addEventListener('touchstart', moveNoButton, {passive: false});
 
-        // VẼ QUẢ CẦU 3D CHUẨN XỊN CÓ THỂ XOAY BẰNG CHUỘT
+        // VẼ QUẢ CẦU 3D
         function initThreeJS() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -149,7 +156,6 @@
             controls.minDistance = 200;
             controls.maxDistance = 600;
 
-            // Lõi quả cầu
             const numPointsSphere = 1500;
             const sphereRadius = 130;
             const sphereVertices = [];
@@ -194,11 +200,11 @@
         function animate() {
             requestAnimationFrame(animate);
             controls.update(); 
-            spherePoints.rotation.y += 0.003; // Quả cầu tự xoay
+            spherePoints.rotation.y += 0.003; 
             renderer.render(scene, camera);
         }
 
-        // ÉP ẢNH XOAY QUANH QUẢ CẦU TỪ TÂM
+        // TẠO VÀNH ĐAI ẢNH
         function addImagesToGalaxy() {
             const imgSrcs = ['1.jpg.png', '2.jpg.png', '3.jpg.png', '4.jpg.png', '5.jpg', '6.jpg'];
             const totalImages = 150; 
@@ -209,6 +215,35 @@
                 img.className = 'star-img';
 
                 let angle = Math.random() * 360; 
-                let radius = 280 + Math.random() * 350; // Vành đai ảnh cách xa quả cầu một chút
-                let heightOffset = (Math.random() - 0.5) * 60; // Độ nhấp nhô của vành đai
-                let tiltX = (Math
+                let radius = 280 + Math.random() * 350; 
+                let heightOffset = (Math.random() - 0.5) * 60; 
+                let tiltX = (Math.random() - 0.5) * 20; 
+
+                img.style.transform = `rotateY(${angle}deg) translateZ(${radius}px) translateY(${heightOffset}px) rotateX(${tiltX}deg)`;
+                galaxy.appendChild(img);
+            }
+        }
+
+        // HÀM CLICK CHUẨN XỊN CHỐNG LIỆT
+        function acceptLove(e) {
+            if(e) e.preventDefault();
+            startMusic();
+
+            uiLayer.style.opacity = '0';
+            setTimeout(() => { uiLayer.style.display = 'none'; }, 1000);
+
+            document.body.classList.add('space-mode');
+            universe.style.opacity = '1';
+            marqueeText.style.opacity = '1';
+
+            initThreeJS();
+            addImagesToGalaxy();
+        }
+
+        // Bắt cả sự kiện click chuột (máy tính) và chạm ngón tay (điện thoại)
+        btnYes.addEventListener('click', acceptLove);
+        btnYes.addEventListener('touchstart', acceptLove, {passive: false});
+
+    </script>
+</body>
+</html>
