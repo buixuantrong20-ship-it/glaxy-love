@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gửi Thảo xinh ❤️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -14,65 +14,108 @@
             transition: background 2s ease; 
         }
         
-        body.space-mode { background: radial-gradient(circle at center, #11001c 0%, #000000 100%); color: white; }
+        /* Không gian sâu thẳm */
+        body.space-mode { background: radial-gradient(circle at center, #0a0015 0%, #000000 100%); color: white; }
         
+        /* 1. BẦU TRỜI SAO LẤP LÁNH */
+        .stars-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: transparent;
+            background-image: 
+                radial-gradient(2px 2px at 10% 20%, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 30% 65%, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50% 15%, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 70% 80%, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90% 40%, #fff, rgba(0,0,0,0));
+            background-repeat: repeat; background-size: 250px 250px;
+            opacity: 0; z-index: 0; pointer-events: none; transition: opacity 2s ease;
+        }
+        .stars-bg.active { opacity: 0.6; animation: twinkle 3s infinite alternate; }
+        @keyframes twinkle { 0% { opacity: 0.3; } 100% { opacity: 0.8; } }
+
+        /* 2. MƯA SAO BĂNG */
+        .shooting-star {
+            position: absolute; width: 150px; height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.8), transparent);
+            transform: rotate(-45deg); opacity: 0; pointer-events: none; z-index: 1;
+        }
+        @keyframes shooting {
+            0% { transform: translateX(100vw) translateY(-50vh) rotate(-45deg); opacity: 1; }
+            100% { transform: translateX(-50vw) translateY(100vh) rotate(-45deg); opacity: 0; }
+        }
+
+        /* 3. MƯA TRÁI TIM NEON */
+        .floating-heart {
+            position: absolute; bottom: -50px; font-size: 20px;
+            color: #ff4081; text-shadow: 0 0 10px #ff4081, 0 0 20px #ff80ab;
+            animation: floatUp 5s linear infinite; opacity: 0; z-index: 1; pointer-events: none;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) scale(1.5) rotate(20deg); opacity: 0; }
+        }
+
+        /* KHUNG CHỌN LÚC ĐẦU */
         #ui-layer {
             position: relative; z-index: 100; padding: 40px; background: rgba(255, 255, 255, 0.4);
             border-radius: 30px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: opacity 1s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: opacity 1s, transform 1s;
         }
         img.main-gif { width: 220px; border-radius: 20px; margin-bottom: 25px; border: 3px solid white; }
         h1 { color: #d81b60; font-size: 2em; margin-bottom: 35px; }
-        
         .btn-group { display: flex; justify-content: center; gap: 25px; }
         button { padding: 18px 40px; font-size: 19px; font-weight: 600; border: none; border-radius: 50px; cursor: pointer; transition: 0.2s; }
-        #btnYes { background: linear-gradient(135deg, #ff4081 0%, #ff80ab 100%); color: white; z-index: 999; box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4); }
+        #btnYes { background: linear-gradient(135deg, #ff4081 0%, #ff80ab 100%); color: white; z-index: 999; box-shadow: 0 0 15px rgba(255, 64, 129, 0.6); animation: pulse 1.5s infinite alternate;}
+        @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
         #btnNo { background-color: rgba(255, 255, 255, 0.8); color: #d81b60; border: 2px solid rgba(216, 27, 96, 0.5); z-index: 1000; }
 
-        /* LỚP VŨ TRỤ CHỨA QUẢ CẦU VÀ VÀNH ĐAI ẢNH */
+        /* VŨ TRỤ CHỨA QUẢ CẦU VÀ ẢNH */
         #universe {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-            perspective: 1200px; opacity: 0; pointer-events: none; transition: opacity 2s ease; z-index: 1;
+            perspective: 1200px; opacity: 0; pointer-events: none; transition: opacity 2s ease; z-index: 2;
             display: flex; justify-content: center; align-items: center;
         }
-        
-        #sphereCanvas { position: absolute; z-index: 2; }
-        
+        #sphereCanvas { position: absolute; z-index: 3; filter: drop-shadow(0 0 20px rgba(186, 104, 200, 0.5)); }
         #galaxy { 
             position: absolute; width: 0; height: 0; transform-style: preserve-3d; 
-            animation: spinGalaxy 35s linear infinite; z-index: 3; 
+            animation: spinGalaxy 40s linear infinite; z-index: 4; 
         }
-        
-        /* Góc nhìn nghiêng xuống một chút để thấy rõ hình dáng cái đĩa */
         @keyframes spinGalaxy { 
             0% { transform: rotateX(-12deg) rotateY(0deg); } 
             100% { transform: rotateX(-12deg) rotateY(360deg); } 
         }
         
-        /* Định dạng ảnh: Kích thước bằng nhau chằn chặn */
+        /* ẢNH ĐỒNG ĐỀU & PHÁT SÁNG */
         .star-img { 
             position: absolute; border-radius: 6px; object-fit: cover; 
-            border: 2px solid rgba(255,255,255,0.8); 
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-            width: 60px; height: 80px; /* KHÓA CỨNG KÍCH THƯỚC Ở ĐÂY */
-            margin-left: -30px; margin-top: -40px;
+            border: 2px solid rgba(255,255,255,0.9); 
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), 0 0 30px rgba(255, 105, 180, 0.3);
+            width: 60px; height: 85px; margin-left: -30px; margin-top: -42px;
         }
 
-        #bottom-text {
-            position: absolute; bottom: 30px; width: 100%; text-align: center;
-            font-size: 18px; font-weight: 400; color: #ff9a9e; opacity: 0; transition: 2s;
-            text-shadow: 0 0 10px rgba(255, 154, 158, 0.6); z-index: 10;
+        /* 4. CHỮ GÕ NHƯ HACKER (TYPEWRITER) */
+        #typing-text {
+            position: absolute; bottom: 40px; width: 90%; max-width: 800px; text-align: center;
+            font-family: 'Dancing Script', cursive; font-size: 32px; color: #ff9a9e; 
+            text-shadow: 0 0 15px rgba(255, 154, 158, 0.8), 0 0 30px rgba(216, 27, 96, 0.6);
+            z-index: 10; min-height: 40px; pointer-events: none;
         }
+        .cursor { display: inline-block; width: 3px; background-color: #ff9a9e; animation: blink 0.7s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+
     </style>
 </head>
 <body>
     
+    <div class="stars-bg" id="starsBg"></div>
+
     <div id="universe">
         <canvas id="sphereCanvas" width="500" height="500"></canvas>
         <div id="galaxy"></div>
     </div>
     
-    <div id="bottom-text">Chúc Thảo 8/3 luôn vui vẻ, rạng rỡ và ngập tràn hạnh phúc. Tỏa sáng như một thiên hà nhé! ❤️</div>
+    <div id="typing-text"><span id="type-content"></span><span class="cursor" id="cursor" style="display:none;">|</span></div>
 
     <div id="ui-layer">
         <img id="image" class="main-gif" src="https://media.tenor.com/ZhmAh5s0qHEAAAAi/peach-goma.gif" alt="Cute Cat">
@@ -94,8 +137,11 @@
         const audio = document.getElementById('myAudio');
         const universe = document.getElementById('universe');
         const galaxy = document.getElementById('galaxy');
-        const bottomText = document.getElementById('bottom-text');
+        const starsBg = document.getElementById('starsBg');
+        const typeContent = document.getElementById('type-content');
+        const cursor = document.getElementById('cursor');
 
+        // Bật nhạc khi chạm
         let isMusicPlaying = false;
         function startMusic() {
             if (!isMusicPlaying) {
@@ -105,6 +151,7 @@
         document.body.addEventListener('click', startMusic);
         document.body.addEventListener('touchstart', startMusic);
 
+        // Nút Không nhảy
         function moveNoButton() {
             startMusic();
             btnNo.style.position = 'fixed';
@@ -112,13 +159,11 @@
             const maxY = window.innerHeight - btnNo.clientHeight - 20;
             btnNo.style.left = Math.max(10, Math.floor(Math.random() * maxX)) + 'px';
             btnNo.style.top = Math.max(10, Math.floor(Math.random() * maxY)) + 'px';
-            
-            let currentSize = parseInt(window.getComputedStyle(btnYes).fontSize);
-            btnYes.style.fontSize = (currentSize + 2) + 'px';
         }
         btnNo.onmouseover = moveNoButton;
         btnNo.ontouchstart = moveNoButton;
 
+        // VẼ QUẢ CẦU HẠT MÀU TÍM
         function createParticleSphere() {
             const canvas = document.getElementById('sphereCanvas');
             const ctx = canvas.getContext('2d');
@@ -127,15 +172,15 @@
                 let phi = Math.acos(-1 + (2 * i) / 1500);
                 let theta = Math.sqrt(1500 * Math.PI) * phi;
                 particles.push({
-                    x: 140 * Math.cos(theta) * Math.sin(phi),
-                    y: 140 * Math.sin(theta) * Math.sin(phi),
-                    z: 140 * Math.cos(phi)
+                    x: 130 * Math.cos(theta) * Math.sin(phi),
+                    y: 130 * Math.sin(theta) * Math.sin(phi),
+                    z: 130 * Math.cos(phi)
                 });
             }
             let angleX = 0; let angleY = 0;
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                angleY += 0.004; angleX += 0.001;
+                angleY += 0.005; angleX += 0.002;
                 particles.forEach(p => {
                     let x1 = p.x * Math.cos(angleY) - p.z * Math.sin(angleY);
                     let z1 = p.z * Math.cos(angleY) + p.x * Math.sin(angleY);
@@ -146,7 +191,7 @@
                     let y2d = canvas.height/2 + y2 * scale;
                     ctx.beginPath();
                     ctx.arc(x2d, y2d, 1.8 * scale, 0, 2 * Math.PI);
-                    ctx.fillStyle = `rgba(186, 104, 200, ${0.4 + (scale * 0.6)})`; 
+                    ctx.fillStyle = `rgba(196, 113, 237, ${0.4 + (scale * 0.6)})`; 
                     ctx.fill();
                 });
                 requestAnimationFrame(draw);
@@ -154,6 +199,48 @@
             draw();
         }
 
+        // TẠO MƯA SAO BĂNG
+        function createShootingStars() {
+            setInterval(() => {
+                let star = document.createElement('div');
+                star.classList.add('shooting-star');
+                star.style.top = Math.random() * 50 + 'vh';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.animation = `shooting ${2 + Math.random() * 2}s linear`;
+                document.body.appendChild(star);
+                setTimeout(() => { star.remove(); }, 4000);
+            }, 2000);
+        }
+
+        // TẠO MƯA TRÁI TIM
+        function createFloatingHearts() {
+            setInterval(() => {
+                let heart = document.createElement('div');
+                heart.classList.add('floating-heart');
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (4 + Math.random() * 3) + 's';
+                document.body.appendChild(heart);
+                setTimeout(() => { heart.remove(); }, 8000);
+            }, 800);
+        }
+
+        // HIỆU ỨNG GÕ CHỮ
+        function typeWriterEffect() {
+            const text = "Chúc Thảo 8/3 luôn vui vẻ, rạng rỡ và ngập tràn hạnh phúc. Tỏa sáng như một thiên hà nhé! 🥰";
+            let i = 0;
+            cursor.style.display = 'inline-block';
+            function type() {
+                if (i < text.length) {
+                    typeContent.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 80); // Tốc độ gõ chữ
+                }
+            }
+            setTimeout(type, 1500); // Đợi ngân hà hiện ra rồi mới bắt đầu gõ
+        }
+
+        // KHI BẤM NÚT CÓ
         btnYes.onclick = function(e) {
             e.preventDefault();
             startMusic();
@@ -162,26 +249,28 @@
             uiLayer.style.opacity = '0';
             setTimeout(() => { uiLayer.style.display = 'none'; }, 800);
 
+            // Bật nền vũ trụ & sao lấp lánh
             document.body.classList.add('space-mode');
+            starsBg.classList.add('active');
             universe.style.opacity = '1';
-            bottomText.style.opacity = '1';
 
             createParticleSphere();
+            createShootingStars();
+            createFloatingHearts();
+            typeWriterEffect();
 
-            // TẠO VÀNH ĐAI ẢNH HOÀN HẢO
+            // TẠO ĐĨA ẢNH PHẲNG
             const imgSrcs = ['1.jpg.png', '2.jpg.png', '3.jpg.png', '4.jpg.png', '5.jpg', '6.jpg'];
-            const totalImages = 120; // 120 ảnh là đủ dày mà không làm lag máy
+            const totalImages = 120;
             
             for(let i = 0; i < totalImages; i++) {
                 let img = document.createElement('img');
                 img.src = imgSrcs[i % imgSrcs.length];
                 img.className = 'star-img';
                 
-                // Trải đều ảnh thành 1 đĩa phẳng quanh tâm
                 let angle = Math.random() * 360; 
-                let radius = 220 + Math.random() * 380; // Bán kính vành đai từ 220px đến 600px
+                let radius = 220 + Math.random() * 400; // Khoảng cách từ tâm ra xa
                 
-                // Ép các ảnh đứng thẳng đứng, chỉ tịnh tiến ra xa tâm
                 img.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
                 galaxy.appendChild(img);
             }
