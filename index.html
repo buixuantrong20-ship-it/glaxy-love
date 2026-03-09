@@ -5,122 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galaxy Love 3D</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; overflow: hidden;
             background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: white;
+            font-family: 'Segoe UI', Tahoma, sans-serif; color: white;
         }
-
         .stars {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: 
                 radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
                 radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
                 radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
-            background-repeat: repeat;
-            background-size: 200px 200px;
-            animation: twinkle 4s infinite linear;
-            z-index: 0;
+                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0));
+            background-repeat: repeat; background-size: 200px 200px;
+            animation: twinkle 4s infinite linear; z-index: 0;
         }
-
-        @keyframes twinkle {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-
+        @keyframes twinkle { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        
         .gallery-container {
-            position: relative;
-            width: 200px;
-            height: 300px;
+            position: relative; width: 200px; height: 300px;
             transform-style: preserve-3d;
-            animation: rotateGallery 25s linear infinite;
-            z-index: 2;
-            margin-top: -50px;
+            animation: rotateGallery 20s linear infinite; z-index: 2; margin-top: -50px;
         }
-
         @keyframes rotateGallery {
             0% { transform: perspective(1000px) rotateY(0deg); }
             100% { transform: perspective(1000px) rotateY(360deg); }
         }
-
+        
+        /* Cấu hình lại góc xoay cho 6 ảnh (360 độ / 6 = 60 độ) */
         .gallery-container span {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             transform-origin: center;
-            transform: rotateY(calc(var(--i) * 36deg)) translateZ(350px);
+            transform: rotateY(calc(var(--i) * 60deg)) translateZ(250px);
         }
-
         .gallery-container span img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 15px;
-            border: 3px solid rgba(255, 255, 255, 0.5);
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; border-radius: 15px; border: 3px solid rgba(255, 255, 255, 0.5);
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), 0 0 40px rgba(255, 0, 255, 0.4);
         }
-
         .message-box {
-            position: absolute;
-            bottom: 50px;
-            text-align: center;
-            z-index: 3;
-            width: 80%;
-            max-width: 600px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
+            position: absolute; bottom: 50px; text-align: center; z-index: 3;
+            width: 80%; max-width: 600px; background: rgba(0, 0, 0, 0.4);
+            padding: 20px; border-radius: 15px; backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
-        .message-box h2 {
-            color: #ff9a9e;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px #ff9a9e;
-        }
-
-        .message-box p {
-            line-height: 1.6;
-            font-size: 16px;
-        }
-
-        audio {
-            position: absolute;
-            bottom: 10px;
-            z-index: 4;
-            opacity: 0.5;
-            transition: opacity 0.3s;
-        }
-        audio:hover {
-            opacity: 1;
-        }
+        .message-box h2 { color: #ff9a9e; margin-bottom: 10px; text-shadow: 0 0 10px #ff9a9e; }
+        .message-box p { line-height: 1.6; font-size: 16px; }
+        audio { position: absolute; bottom: 10px; z-index: 4; opacity: 0.5; transition: opacity 0.3s; }
+        audio:hover { opacity: 1; }
     </style>
 </head>
 <body>
-
     <div class="stars"></div>
-
     <div class="gallery-container">
         <span style="--i:1;"><img src="1.jpg.png" alt="Ảnh 1"></span>
         <span style="--i:2;"><img src="2.jpg.png" alt="Ảnh 2"></span>
@@ -128,22 +66,13 @@
         <span style="--i:4;"><img src="4.jpg.png" alt="Ảnh 4"></span>
         <span style="--i:5;"><img src="5.jpg" alt="Ảnh 5"></span>
         <span style="--i:6;"><img src="6.jpg" alt="Ảnh 6"></span>
-        
-        <span style="--i:7;"><img src="7.jpg" alt="Ảnh 7"></span>
-        <span style="--i:8;"><img src="8.jpg" alt="Ảnh 8"></span>
-        <span style="--i:9;"><img src="9.jpg" alt="Ảnh 9"></span>
-        <span style="--i:10;"><img src="10.jpg" alt="Ảnh 10"></span>
     </div>
-
     <div class="message-box">
         <h2>Gửi Thảo xinh,</h2>
         <p>Chúc cậu luôn vui vẻ, rạng rỡ và ngập tràn hạnh phúc. Cứ mãi xinh xắn và tỏa sáng theo cách của riêng mình nha! ❤️</p>
     </div>
-
     <audio autoplay loop controls>
         <source src="nhac.mp3" type="audio/mpeg">
-        Trình duyệt của bạn không hỗ trợ thẻ audio.
     </audio>
-
 </body>
 </html>
