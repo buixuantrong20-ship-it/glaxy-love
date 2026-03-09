@@ -4,57 +4,153 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gửi Thảo xinh ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            height: 100vh; background-color: #fce4ec; 
-            font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; text-align: center;
-            transition: background 2s ease; 
+            height: 100vh;
+            /* Nền lúc đầu: Hồng pastel sang trọng, có chiều sâu */
+            background: linear-gradient(135deg, #fce4ec 0%, #ffebee 100%);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            text-align: center;
+            transition: background 2s ease, color 2s ease; 
         }
-        body.space-mode { background: radial-gradient(circle at center, #11001c 0%, #000000 100%); color: white; }
-        
-        /* Chỉnh lại độ ưu tiên để không bị đè nút */
-        #ui-layer { position: relative; z-index: 100; transition: transform 1s, opacity 1s; }
-        img.main-gif { width: 250px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 1s; }
-        h1 { color: #d81b60; font-size: 2em; margin-bottom: 30px; padding: 0 20px; text-shadow: 0 0 10px rgba(255,255,255,0.8); transition: color 2s; }
-        body.space-mode h1 { color: #ff9a9e; }
-        
-        .btn-group { position: relative; width: 100%; display: flex; justify-content: center; gap: 30px; }
-        button { padding: 15px 30px; font-size: 20px; font-weight: bold; border: none; border-radius: 30px; cursor: pointer; transition: transform 0.2s; }
-        
-        #btnYes { background-color: #ff4081; color: white; box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4); position: relative; z-index: 999; }
-        #btnNo { background-color: #fff; color: #d81b60; border: 2px solid #d81b60; z-index: 1000; }
 
-        /* VŨ TRỤ (Ép tất cả thành tàng hình để không cản trở thao tác bấm) */
+        /* Chế độ vũ trụ: Sâu thẳm, huyền ảo hơn */
+        body.space-mode {
+            background: radial-gradient(circle at center, #11001c 0%, #000000 100%);
+            color: white;
+        }
+
+        /* KHUNG CHỨA (UI Layer) theo phong cách Glassmorphism */
+        #ui-layer {
+            position: relative;
+            z-index: 100;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: opacity 1s, visibility 1s;
+        }
+
+        img.main-gif {
+            width: 220px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            border: 3px solid white;
+        }
+
+        h1 {
+            color: #d81b60;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 35px;
+            padding: 0 10px;
+            text-shadow: 0 2px 5px rgba(216, 27, 96, 0.2);
+            transition: color 2s, text-shadow 2s;
+        }
+        body.space-mode h1 {
+            color: #ff9a9e;
+            text-shadow: 0 0 15px rgba(255, 154, 158, 0.8);
+        }
+
+        .btn-group {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        button {
+            padding: 18px 40px;
+            font-size: 19px;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* Nút Có: Phong cách Gradient */
+        #btnYes {
+            background: linear-gradient(135deg, #ff4081 0%, #ff80ab 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 64, 129, 0.4);
+            position: relative;
+            z-index: 999;
+        }
+        #btnYes:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(255, 64, 129, 0.5);
+        }
+
+        /* Nút Không: Viền mờ */
+        #btnNo {
+            background-color: rgba(255, 255, 255, 0.6);
+            color: #d81b60;
+            border: 2px solid rgba(216, 27, 96, 0.5);
+            z-index: 1000;
+        }
+
+        /* ================= VŨ TRỤ & QUẢ CẦU HẠT ================= */
         #universe {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-            perspective: 1000px; opacity: 0; pointer-events: none; transition: opacity 3s ease; z-index: 1;
+            perspective: 1500px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 3s ease;
+            z-index: 1;
             display: flex; justify-content: center; align-items: center;
         }
-        #sphereCanvas { position: absolute; z-index: 2; pointer-events: none; }
-        #galaxy { position: absolute; width: 0; height: 0; transform-style: preserve-3d; animation: spinGalaxy 30s linear infinite; z-index: 3; pointer-events: none; }
+
+        #sphereCanvas {
+            position: absolute;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        #galaxy {
+            position: absolute; width: 0; height: 0;
+            transform-style: preserve-3d;
+            animation: spinGalaxy 40s linear infinite;
+            z-index: 3;
+            pointer-events: none;
+        }
         
         @keyframes spinGalaxy {
             0% { transform: rotateX(-10deg) rotateY(0deg); }
             100% { transform: rotateX(-10deg) rotateY(360deg); }
         }
+
         .star-img {
-            position: absolute; border-radius: 8px; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-            object-fit: cover; border: 2px solid rgba(255,255,255,0.7); 
+            position: absolute;
+            border-radius: 12px;
+            object-fit: cover;
+            /* Polaroid style */
+            border: 4px solid white; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            transition: opacity 2s;
         }
     </style>
 </head>
 <body>
 
     <div id="universe">
-        <canvas id="sphereCanvas" width="400" height="400"></canvas>
+        <canvas id="sphereCanvas" width="500" height="500"></canvas>
         <div id="galaxy"></div>
     </div>
 
     <div id="ui-layer">
-        <img id="image" class="main-gif" src="https://media.giphy.com/media/ICOgUNjpvO0PC/giphy.gif" alt="Cute Cat">
-        <h1 id="text">Thảo có muốn nhận quà của tớ không ? 🎁</h1>
+        <img id="image" class="main-gif" src="https://media.tenor.com/ZhmAh5s0qHEAAAAi/peach-goma.gif" alt="Cute Cat">
+        <h1 id="text">Thảo có muốn nhận quà của tao không ? 🎁</h1>
         <div class="btn-group">
             <button id="btnYes">Cóooooo ❤️</button>
             <button id="btnNo">Không thèm 😝</button>
@@ -70,25 +166,26 @@
         const btnNo = document.getElementById('btnNo');
         const text = document.getElementById('text');
         const image = document.getElementById('image');
+        const uiLayer = document.getElementById('ui-layer');
         const audio = document.getElementById('myAudio');
         const universe = document.getElementById('universe');
         const galaxy = document.getElementById('galaxy');
         
-        let yesSize = 20; let paddingV = 15; let paddingH = 30;
+        let yesSize = 20; let paddingV = 18; let paddingH = 40;
         let isMusicPlaying = false;
 
         function startMusic() {
             if (!isMusicPlaying) {
                 audio.play().then(() => {
                     isMusicPlaying = true;
-                }).catch(err => console.log("Trình duyệt chặn nhạc, đợi bấm nút...", err));
+                }).catch(err => console.log("Chờ tương tác để bật nhạc...", err));
             }
         }
 
         document.body.addEventListener('click', startMusic);
         document.body.addEventListener('touchstart', startMusic);
 
-        // Code làm nút Không bỏ chạy (Fix lỗi đè nút bằng position: fixed)
+        // Code làm nút Không bỏ chạy
         function moveNoButton() {
             startMusic();
             btnNo.style.position = 'fixed';
@@ -97,7 +194,7 @@
             btnNo.style.left = Math.max(10, Math.floor(Math.random() * maxX)) + 'px';
             btnNo.style.top = Math.max(10, Math.floor(Math.random() * maxY)) + 'px';
 
-            yesSize += 6; paddingV += 3; paddingH += 6;
+            yesSize += 7; paddingV += 4; paddingH += 7;
             btnYes.style.fontSize = yesSize + 'px';
             btnYes.style.padding = paddingV + 'px ' + paddingH + 'px';
         }
@@ -105,13 +202,13 @@
         btnNo.addEventListener('mouseover', moveNoButton);
         btnNo.addEventListener('touchstart', moveNoButton);
 
-        // Vẽ quả cầu hạt 3D
+        // THUẬT TOÁN VẼ QUẢ CẦU HẠT TÍM (Nâng cấp mịn hơn, to hơn)
         function createParticleSphere() {
             const canvas = document.getElementById('sphereCanvas');
             const ctx = canvas.getContext('2d');
             let particles = [];
-            const numParticles = 1200; 
-            const sphereRadius = 140; 
+            const numParticles = 1500; // Tăng hạt cho mịn
+            const sphereRadius = 160; // To hơn một chút
 
             for(let i = 0; i < numParticles; i++) {
                 let phi = Math.acos(-1 + (2 * i) / numParticles);
@@ -126,69 +223,12 @@
             let angleX = 0; let angleY = 0;
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                angleY += 0.005; angleX += 0.002;
+                // Xoay quả cầu mượt mà
+                angleY += 0.003; 
+                angleX += 0.001;
 
                 particles.forEach(p => {
                     let x1 = p.x * Math.cos(angleY) - p.z * Math.sin(angleY);
                     let z1 = p.z * Math.cos(angleY) + p.x * Math.sin(angleY);
                     let y2 = p.y * Math.cos(angleX) - z1 * Math.sin(angleX);
-                    let z2 = z1 * Math.cos(angleX) + p.y * Math.sin(angleX);
-
-                    let scale = 250 / (250 + z2);
-                    let x2d = canvas.width/2 + x1 * scale;
-                    let y2d = canvas.height/2 + y2 * scale;
-
-                    ctx.beginPath();
-                    ctx.arc(x2d, y2d, 1.5 * scale, 0, 2 * Math.PI);
-                    ctx.fillStyle = `rgba(196, 113, 237, ${scale})`;
-                    ctx.fill();
-                });
-                requestAnimationFrame(draw);
-            }
-            draw();
-        }
-
-        // KHI BẤM NÚT CÓ (Đã nâng cấp độ nhạy)
-        function acceptLove(e) {
-            e.preventDefault(); // Ngăn lỗi double-click trên điện thoại
-            startMusic();
-            
-            text.innerHTML = "Chúc Thảo 8/3 luôn vui vẻ, rạng rỡ và ngập tràn hạnh phúc. Tỏa sáng như một thiên hà nhé! 🥰";
-            image.style.display = 'none'; 
-            document.querySelector('.btn-group').style.display = 'none';
-
-            document.body.classList.add('space-mode');
-            universe.style.opacity = '1';
-
-            createParticleSphere();
-
-            const imgSrcs = ['1.jpg.png', '2.jpg.png', '3.jpg.png', '4.jpg.png', '5.jpg', '6.jpg'];
-            for(let i = 0; i < 100; i++) {
-                let img = document.createElement('img');
-                img.src = imgSrcs[i % imgSrcs.length];
-                img.className = 'star-img';
-
-                let size = Math.random() > 0.8 ? 60 : (Math.random() > 0.5 ? 45 : 30);
-                img.style.width = size + 'px';
-                img.style.height = (size * 1.2) + 'px'; 
-                img.style.marginLeft = -(size/2) + 'px';
-                img.style.marginTop = -(size/2) + 'px';
-
-                let angle = Math.random() * 360; 
-                let radius = 300 + Math.random() * 400; 
-                let height = (Math.random() - 0.5) * 150; 
-                let tiltX = (Math.random() - 0.5) * 60;
-                let tiltY = (Math.random() - 0.5) * 60;
-
-                img.style.transform = `rotateY(${angle}deg) translateZ(${radius}px) translateY(${height}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-                galaxy.appendChild(img);
-            }
-        }
-
-        // Gắn cả 2 sự kiện click chuột và chạm tay để đảm bảo siêu nhạy
-        btnYes.addEventListener('click', acceptLove);
-        btnYes.addEventListener('touchstart', acceptLove, {passive: false});
-
-    </script>
-</body>
-</html>
+                    let z2 = z1 * Math.cos(angleX) + p.y *
