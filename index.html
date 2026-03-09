@@ -133,4 +133,93 @@
             for (let i = 0; i < numPoints; i++) {
                 const u = Math.random();
                 const v = Math.random();
-                const theta =
+                const theta = 2 * Math.PI * u;
+                const phi = Math.acos(2 * v - 1);
+                const x = sphereRadius * Math.sin(phi) * Math.cos(theta);
+                const y = sphereRadius * Math.sin(phi) * Math.sin(theta);
+                const z = sphereRadius * Math.cos(phi);
+                positions.push(x, y, z);
+                colors.push(0.8, 0.4 + Math.random() * 0.5, 0.9);
+            }
+
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 2.5, vertexColors: true, blending: THREE.AdditiveBlending,
+                transparent: true, depthWrite: false
+            });
+
+            const particleSphere = new THREE.Points(geometry, material);
+            galaxyGroup.add(particleSphere);
+
+            // TẠO VÀNH ĐAI ẢNH CỦA THẢO
+            const textureLoader = new THREE.TextureLoader();
+            const imgSrcs = ['1.jpg.png', '2.jpg.png', '3.jpg.png', '4.jpg.png', '5.jpg', '6.jpg'];
+            
+            const materials = imgSrcs.map(src => {
+                return new THREE.MeshBasicMaterial({
+                    map: textureLoader.load(src),
+                    side: THREE.DoubleSide,
+                    transparent: true
+                });
+            });
+
+            const totalImages = 80; 
+            for (let i = 0; i < totalImages; i++) {
+                const planeGeo = new THREE.PlaneGeometry(45, 65); // Kích thước ảnh
+                const mat = materials[i % materials.length];
+                const mesh = new THREE.Mesh(planeGeo, mat);
+
+                const angle = Math.random() * Math.PI * 2;
+                const radius = 200 + Math.random() * 250; 
+                
+                mesh.position.x = Math.cos(angle) * radius;
+                mesh.position.z = Math.sin(angle) * radius;
+                mesh.position.y = (Math.random() - 0.5) * 60; 
+
+                mesh.rotation.y = -angle + Math.PI / 2;
+                mesh.rotation.x = (Math.random() - 0.5) * 0.4;
+                mesh.rotation.z = (Math.random() - 0.5) * 0.2;
+
+                galaxyGroup.add(mesh);
+            }
+
+            window.addEventListener('resize', onWindowResize, false);
+            animate();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update(); 
+            if(galaxyGroup) {
+                galaxyGroup.rotation.y += 0.002;
+            }
+            renderer.render(scene, camera);
+        }
+
+        // ĐÂY LÀ HÀM BẤM NÚT (Đã biến thành hàm toàn cục)
+        window.acceptLove = function() {
+            startMusic();
+            
+            // Xóa khung ngoài
+            uiLayer.style.opacity = '0';
+            setTimeout(() => { uiLayer.style.display = 'none'; }, 1000);
+
+            // Bật vũ trụ
+            document.body.classList.add('space-mode');
+            universe.style.opacity = '1';
+            marqueeText.style.opacity = '1';
+
+            // Dựng 3D
+            initThreeJS();
+        };
+    </script>
+</body>
+</html>
