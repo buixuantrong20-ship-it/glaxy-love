@@ -14,7 +14,7 @@
             transition: background 2s ease; 
         }
         
-        /* Nền vũ trụ tối để làm nổi bật quả cầu và ảnh */
+        /* Nền vũ trụ */
         body.space-mode { background: radial-gradient(circle at center, #11001c 0%, #000000 100%); color: white; }
         
         #ui-layer {
@@ -30,37 +30,38 @@
         #btnYes { background: linear-gradient(135deg, #ff4081 0%, #ff80ab 100%); color: white; z-index: 999; box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4); }
         #btnNo { background-color: rgba(255, 255, 255, 0.6); color: #d81b60; border: 2px solid rgba(216, 27, 96, 0.5); z-index: 1000; }
 
-        /* LỚP VŨ TRỤ CHỨA QUẢ CẦU VÀ ẢNH */
+        /* LỚP VŨ TRỤ */
         #universe {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             perspective: 1200px; opacity: 0; pointer-events: none; transition: opacity 2s ease; z-index: 1;
         }
         
-        /* Quả cầu hạt bụi */
+        /* Quả cầu hạt bụi 3D */
         #particleCanvas { position: absolute; top: 0; left: 0; z-index: 2; pointer-events: auto; }
         
-        /* Dải ngân hà chứa ảnh */
+        /* DẢI NGÂN HÀ ẢNH (Đã fix lỗi căn giữa ở đây) */
         #galaxy { 
             position: absolute; 
-            top: 50%; left: 50%; /* Dòng thần thánh kéo ảnh ra giữa màn hình */
+            top: 50%; left: 50%; /* Dòng kéo toàn bộ ảnh ra giữa màn hình */
             width: 0; height: 0; transform-style: preserve-3d; 
             animation: spinGalaxy 35s linear infinite; z-index: 3; 
         }
         
-        /* Góc nghiêng để nhìn thấy vành đai ảnh */
         @keyframes spinGalaxy { 
-            0% { transform: rotateX(-15deg) rotateY(0deg); } 
-            100% { transform: rotateX(-15deg) rotateY(360deg); } 
+            0% { transform: rotateX(-10deg) rotateY(0deg); } 
+            100% { transform: rotateX(-10deg) rotateY(360deg); } 
         }
         
-        /* Định dạng chung cho ảnh */
+        /* ẢNH CỦA THẢO (Đã làm to ra 80x110 giống ảnh mẫu) */
         .star-img { 
             position: absolute; border-radius: 8px; object-fit: cover; 
             border: 3px solid rgba(255,255,255,0.8); 
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            width: 80px; height: 110px; 
+            margin-left: -40px; margin-top: -55px; /* Ép tâm chuẩn để xoay không bị giật */
         }
 
-        /* Chữ chạy dưới đáy màn hình */
+        /* Chữ chạy dưới đáy */
         #marquee-text {
             position: absolute; bottom: 20px; width: 100%; text-align: center;
             font-size: 22px; font-weight: 600; color: #ff9a9e; opacity: 0; transition: 2s;
@@ -79,7 +80,7 @@
 
     <div id="ui-layer">
         <img id="image" class="main-gif" src="https://media.tenor.com/ZhmAh5s0qHEAAAAi/peach-goma.gif" alt="Cute Cat">
-        <h1 id="text">Thảo có muốn nhận quà  của tớ không nè? 🎁</h1>
+        <h1 id="text">Thảo có muốn nhận quà 8/3 của tớ không nè? 🎁</h1>
         <div class="btn-group">
             <button id="btnYes">Cóooooo ❤️</button>
             <button id="btnNo">Không thèm 😝</button>
@@ -92,6 +93,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
     <script>
         const btnYes = document.getElementById('btnYes');
         const btnNo = document.getElementById('btnNo');
@@ -103,9 +105,8 @@
         const canvas = document.getElementById('particleCanvas');
 
         let scene, camera, renderer, controls, spherePoints, ringPoints;
-        let imgIndex = 0;
 
-        // Ép bật nhạc khi chạm vào màn hình
+        // Bật nhạc
         let isMusicPlaying = false;
         function startMusic() {
             if (!isMusicPlaying) {
@@ -115,7 +116,7 @@
         document.body.addEventListener('click', startMusic);
         document.body.addEventListener('touchstart', startMusic);
 
-        // Nút Không bỏ chạy
+        // Nút chạy
         function moveNoButton() {
             startMusic();
             btnNo.style.position = 'fixed';
@@ -130,7 +131,7 @@
         btnNo.onmouseover = moveNoButton;
         btnNo.ontouchstart = moveNoButton;
 
-        // VẼ QUẢ CẦU HẠT BỤI 3D VỚI CẢM ỨNG XOAY
+        // VẼ QUẢ CẦU 3D CHUẨN XỊN CÓ THỂ XOAY BẰNG CHUỘT
         function initThreeJS() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -140,7 +141,6 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
 
-            // Bật cảm ứng xoay
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.05;
@@ -149,7 +149,7 @@
             controls.minDistance = 200;
             controls.maxDistance = 600;
 
-            // QUẢ CẦU HẠT BỤI TRUNG TÂM (như ví dụ ảnh image_12.png)
+            // Lõi quả cầu
             const numPointsSphere = 1500;
             const sphereRadius = 130;
             const sphereVertices = [];
@@ -160,13 +160,11 @@
                 const v = Math.random();
                 const theta = 2 * Math.PI * u;
                 const phi = Math.acos(2 * v - 1);
-                
                 const x = sphereRadius * Math.sin(phi) * Math.cos(theta);
                 const y = sphereRadius * Math.sin(phi) * Math.sin(theta);
                 const z = sphereRadius * Math.cos(phi);
                 sphereVertices.push(x, y, z);
                 
-                // Màu tím/trắng phát sáng
                 const colorVal = 0.4 + (Math.random() * 0.6);
                 sphereColors.push(0.8, colorVal, 0.9); 
             }
@@ -176,53 +174,12 @@
             sphereGeometry.setAttribute('color', new THREE.Float32BufferAttribute(sphereColors, 3));
 
             const sphereMaterial = new THREE.PointsMaterial({
-                size: 2.5,
-                vertexColors: true,
-                blending: THREE.AdditiveBlending,
-                transparent: true,
-                depthWrite: false,
-                sizeAttenuation: true
+                size: 2.5, vertexColors: true, blending: THREE.AdditiveBlending,
+                transparent: true, depthWrite: false, sizeAttenuation: true
             });
 
             spherePoints = new THREE.Points(sphereGeometry, sphereMaterial);
             scene.add(spherePoints);
-
-            // VÀNH ĐAI HẠT BỤI
-            const numPointsRing = 3000;
-            const ringInnerRadius = 220;
-            const ringOuterRadius = 600;
-            const ringVertices = [];
-            const ringColors = [];
-
-            for (let i = 0; i < numPointsRing; i++) {
-                const angle = Math.random() * 2 * Math.PI;
-                const radius = ringInnerRadius + Math.random() * (ringOuterRadius - ringInnerRadius);
-                const x = radius * Math.cos(angle);
-                const y = radius * Math.sin(angle);
-                const z = (Math.random() - 0.5) * 60; 
-                ringVertices.push(x, y, z);
-
-                // Màu tím/hồng phát sáng
-                const colorVal = 0.5 + (Math.random() * 0.5);
-                ringColors.push(0.9, 0.6, colorVal);
-            }
-
-            const ringGeometry = new THREE.BufferGeometry();
-            ringGeometry.setAttribute('position', new THREE.Float32BufferAttribute(ringVertices, 3));
-            ringGeometry.setAttribute('color', new THREE.Float32BufferAttribute(ringColors, 3));
-
-            const ringMaterial = new THREE.PointsMaterial({
-                size: 2,
-                vertexColors: true,
-                blending: THREE.AdditiveBlending,
-                transparent: true,
-                depthWrite: false,
-                sizeAttenuation: true
-            });
-
-            ringPoints = new THREE.Points(ringGeometry, ringMaterial);
-            ringPoints.rotation.x = THREE.MathUtils.degToRad(-12); // Nghiêng vành đai
-            scene.add(ringPoints);
 
             window.addEventListener('resize', onWindowResize, false);
             animate();
@@ -236,15 +193,12 @@
 
         function animate() {
             requestAnimationFrame(animate);
-            controls.update(); // Cập nhật cảm ứng xoay
-
-            // Xoay nhẹ quả cầu và vành đai
-            spherePoints.rotation.y += 0.003;
-            ringPoints.rotation.y += 0.001;
-
+            controls.update(); 
+            spherePoints.rotation.y += 0.003; // Quả cầu tự xoay
             renderer.render(scene, camera);
         }
 
+        // ÉP ẢNH XOAY QUANH QUẢ CẦU TỪ TÂM
         function addImagesToGalaxy() {
             const imgSrcs = ['1.jpg.png', '2.jpg.png', '3.jpg.png', '4.jpg.png', '5.jpg', '6.jpg'];
             const totalImages = 150; 
@@ -253,47 +207,8 @@
                 let img = document.createElement('img');
                 img.src = imgSrcs[i % imgSrcs.length];
                 img.className = 'star-img';
-                
-                // Khóa cứng kích thước ở đây
-                let imgWidth = 55;
-                let imgHeight = 75;
-                img.style.width = imgWidth + 'px';
-                img.style.height = imgHeight + 'px'; 
-                img.style.marginLeft = -(imgWidth/2) + 'px';
-                img.style.marginTop = -(imgHeight/2) + 'px';
 
-                // Dàn đều ảnh thành 1 vành đai phẳng
                 let angle = Math.random() * 360; 
-                let radius = 250 + Math.random() * 350; 
-                let heightOffset = (Math.random() - 0.5) * 60; 
-                
-                let tiltX = (Math.random() - 0.5) * 20;
-
-                img.style.transform = `rotateY(${angle}deg) translateZ(${radius}px) translateY(${heightOffset}px) rotateX(${tiltX}deg)`;
-                galaxy.appendChild(img);
-            }
-        }
-
-        // KHI BẤM NÚT CÓ
-        btnYes.onclick = function(e) {
-            e.preventDefault();
-            startMusic();
-
-            // Ẩn lớp chọn Có/Không
-            uiLayer.style.opacity = '0';
-            setTimeout(() => { uiLayer.style.display = 'none'; }, 1000);
-
-            // Bật nền vũ trụ và hiện chữ dưới đáy
-            document.body.classList.add('space-mode');
-            universe.style.opacity = '1';
-            marqueeText.style.opacity = '1';
-
-            // Khởi tạo quả cầu 3D với cảm ứng xoay
-            initThreeJS();
-
-            // Tạo vành đai ảnh
-            addImagesToGalaxy();
-        };
-    </script>
-</body>
-</html>
+                let radius = 280 + Math.random() * 350; // Vành đai ảnh cách xa quả cầu một chút
+                let heightOffset = (Math.random() - 0.5) * 60; // Độ nhấp nhô của vành đai
+                let tiltX = (Math
