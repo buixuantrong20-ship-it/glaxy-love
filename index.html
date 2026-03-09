@@ -6,84 +6,58 @@
     <title>Gửi Thảo xinh ❤️</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             height: 100vh; background-color: #fce4ec; 
             font-family: 'Segoe UI', Tahoma, sans-serif; overflow: hidden; text-align: center;
             transition: background 2s ease; 
         }
-
-        body.space-mode {
-            background: radial-gradient(circle at center, #16222a 0%, #000000 100%);
-            color: white;
-        }
-
-        #ui-layer {
-            position: relative; z-index: 10; transition: transform 1s, opacity 1s;
-        }
-
-        img.main-gif {
-            width: 250px; border-radius: 15px; margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 1s;
-        }
-
-        h1 {
-            color: #d81b60; font-size: 2em; margin-bottom: 30px; padding: 0 20px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.8); transition: color 2s;
-        }
+        body.space-mode { background: radial-gradient(circle at center, #11001c 0%, #000000 100%); color: white; }
+        #ui-layer { position: relative; z-index: 10; transition: transform 1s, opacity 1s; }
+        img.main-gif { width: 250px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 1s; }
+        h1 { color: #d81b60; font-size: 2em; margin-bottom: 30px; padding: 0 20px; text-shadow: 0 0 10px rgba(255,255,255,0.8); transition: color 2s; }
         body.space-mode h1 { color: #ff9a9e; }
-
         .btn-group { position: relative; width: 100%; display: flex; justify-content: center; gap: 30px; }
         button { padding: 15px 30px; font-size: 20px; font-weight: bold; border: none; border-radius: 30px; cursor: pointer; transition: transform 0.2s; }
         #btnYes { background-color: #ff4081; color: white; box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4); }
         #btnNo { background-color: #fff; color: #d81b60; border: 2px solid #d81b60; position: relative; }
 
-        /* VŨ TRỤ */
+        /* VŨ TRỤ & QUẢ CẦU HẠT TÍM */
         #universe {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             perspective: 1000px; opacity: 0; pointer-events: none; transition: opacity 3s ease; z-index: 1;
+            display: flex; justify-content: center; align-items: center;
         }
-        #galaxy {
-            position: absolute; top: 50%; left: 50%; width: 0; height: 0; 
-            transform-style: preserve-3d; animation: spinGalaxy 30s linear infinite;
-        }
+        #sphereCanvas { position: absolute; z-index: 2; }
+        #galaxy { position: absolute; width: 0; height: 0; transform-style: preserve-3d; animation: spinGalaxy 30s linear infinite; z-index: 3; }
+        
         @keyframes spinGalaxy {
-            0% { transform: rotateX(-15deg) rotateY(0deg); }
-            100% { transform: rotateX(-15deg) rotateY(360deg); }
+            0% { transform: rotateX(-10deg) rotateY(0deg); }
+            100% { transform: rotateX(-10deg) rotateY(360deg); }
         }
-
-        /* HÀNH TINH PHÁT SÁNG Ở GIỮA (Đã được mang trở lại) */
-        .planet {
-            position: absolute; top: -75px; left: -75px; width: 150px; height: 150px;
-            border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffffff, #ff9a9e, #d81b60);
-            box-shadow: 0 0 50px #ff9a9e, 0 0 100px #d81b60;
-        }
-
         .star-img {
-            position: absolute; border-radius: 5px; box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-            object-fit: cover; border: 2px solid rgba(255,255,255,0.8); 
+            position: absolute; border-radius: 8px; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            object-fit: cover; border: 2px solid rgba(255,255,255,0.7); 
         }
     </style>
 </head>
 <body>
 
     <div id="universe">
-        <div id="galaxy">
-            <div class="planet"></div>
-            </div>
+        <canvas id="sphereCanvas" width="400" height="400"></canvas>
+        <div id="galaxy"></div>
     </div>
 
     <div id="ui-layer">
         <img id="image" class="main-gif" src="https://media.giphy.com/media/ICOgUNjpvO0PC/giphy.gif" alt="Cute Cat">
-        <h1 id="text">Thảo có muốn nhận quà  của tớ không nè? 🎁</h1>
+        <h1 id="text">Thảo có muốn nhận quà của tớ không ? 🎁</h1>
         <div class="btn-group">
             <button id="btnYes">Cóooooo ❤️</button>
             <button id="btnNo">Không thèm 😝</button>
         </div>
     </div>
 
-    <audio id="myAudio" loop>
+    <audio id="myAudio" loop preload="auto">
         <source src="nhac.mp3" type="audio/mpeg">
     </audio>
 
@@ -97,61 +71,26 @@
         const galaxy = document.getElementById('galaxy');
         
         let yesSize = 20; let paddingV = 15; let paddingH = 30;
+        let isMusicPlaying = false;
 
-        // Code nút Không bỏ chạy
-        function moveNoButton() {
-            btnNo.style.position = 'absolute';
-            const maxX = window.innerWidth - btnNo.clientWidth - 50;
-            const maxY = window.innerHeight - btnNo.clientHeight - 50;
-            btnNo.style.left = Math.max(20, Math.floor(Math.random() * maxX)) + 'px';
-            btnNo.style.top = Math.max(20, Math.floor(Math.random() * maxY)) + 'px';
-
-            yesSize += 8; paddingV += 4; paddingH += 8;
-            btnYes.style.fontSize = yesSize + 'px';
-            btnYes.style.padding = paddingV + 'px ' + paddingH + 'px';
+        // MẸO ÉP PHÁT NHẠC: Bật nhạc ngay khi có bất kỳ tương tác nào trên màn hình
+        function startMusic() {
+            if (!isMusicPlaying) {
+                audio.play().then(() => {
+                    isMusicPlaying = true;
+                }).catch(err => console.log("Trình duyệt vẫn đang chờ tương tác...", err));
+            }
         }
 
-        btnNo.addEventListener('mouseover', moveNoButton);
-        btnNo.addEventListener('touchstart', moveNoButton);
+        // Chỉ cần click chuột bừa, lướt qua hoặc chạm nhẹ vào màn hình là nhạc sẽ cố gắng kích hoạt
+        document.body.addEventListener('click', startMusic);
+        document.body.addEventListener('touchstart', startMusic);
 
-        // KHI BẤM NÚT CÓ
-        btnYes.addEventListener('click', () => {
-            text.innerHTML = "Chúc Thảo 8/3 luôn vui vẻ, rạng rỡ và ngập tràn hạnh phúc. Tỏa sáng như một thiên hà nhé! 🥰";
-            
-            // Xóa ảnh mèo đi để nhường chỗ cho Hành tinh phát sáng
-            image.style.display = 'none'; 
-            document.querySelector('.btn-group').style.display = 'none';
-            
-            // Bật nhạc (Nếu file trên GitHub tên đúng là nhac.mp3)
-            audio.play();
-
-            // Hiện vũ trụ
-            document.body.classList.add('space-mode');
-            universe.style.opacity = '1';
-
-            // Tạo ngân hà ảnh Thảo
-            const imgSrcs = ['1.jpg.png', '2.jpg.png', '3.jpg.png', '4.jpg.png', '5.jpg', '6.jpg'];
-            for(let i = 0; i < 150; i++) {
-                let img = document.createElement('img');
-                img.src = imgSrcs[i % imgSrcs.length];
-                img.className = 'star-img';
-
-                let size = Math.random() > 0.8 ? 80 : (Math.random() > 0.5 ? 55 : 40);
-                img.style.width = size + 'px';
-                img.style.height = (size * 1.2) + 'px'; 
-                img.style.marginLeft = -(size/2) + 'px';
-                img.style.marginTop = -(size/2) + 'px';
-
-                let angle = Math.random() * 360; 
-                let radius = 250 + Math.random() * 450; 
-                let height = (Math.random() - 0.5) * 200; 
-                let tiltX = (Math.random() - 0.5) * 60;
-                let tiltY = (Math.random() - 0.5) * 60;
-
-                img.style.transform = `rotateY(${angle}deg) translateZ(${radius}px) translateY(${height}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-                galaxy.appendChild(img);
-            }
-        });
-    </script>
-</body>
-</html>
+        // Nút Không bỏ chạy
+        function moveNoButton() {
+            startMusic(); // Lúc rê chuột vào nút Không là lén bật nhạc luôn
+            btnNo.style.position = 'absolute';
+            const maxX = window.innerWidth - btnNo.clientWidth - 50;
+            const maxY = window.innerHeight -
+        
+      
