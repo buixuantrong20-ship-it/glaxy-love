@@ -13,23 +13,27 @@
             transition: background 2s ease; 
         }
         body.space-mode { background: radial-gradient(circle at center, #11001c 0%, #000000 100%); color: white; }
-        #ui-layer { position: relative; z-index: 10; transition: transform 1s, opacity 1s; }
+        
+        /* Chỉnh lại độ ưu tiên để không bị đè nút */
+        #ui-layer { position: relative; z-index: 100; transition: transform 1s, opacity 1s; }
         img.main-gif { width: 250px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 1s; }
         h1 { color: #d81b60; font-size: 2em; margin-bottom: 30px; padding: 0 20px; text-shadow: 0 0 10px rgba(255,255,255,0.8); transition: color 2s; }
         body.space-mode h1 { color: #ff9a9e; }
+        
         .btn-group { position: relative; width: 100%; display: flex; justify-content: center; gap: 30px; }
         button { padding: 15px 30px; font-size: 20px; font-weight: bold; border: none; border-radius: 30px; cursor: pointer; transition: transform 0.2s; }
-        #btnYes { background-color: #ff4081; color: white; box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4); }
-        #btnNo { background-color: #fff; color: #d81b60; border: 2px solid #d81b60; position: relative; }
+        
+        #btnYes { background-color: #ff4081; color: white; box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4); position: relative; z-index: 999; }
+        #btnNo { background-color: #fff; color: #d81b60; border: 2px solid #d81b60; z-index: 1000; }
 
-        /* VŨ TRỤ & QUẢ CẦU HẠT TÍM */
+        /* VŨ TRỤ (Ép tất cả thành tàng hình để không cản trở thao tác bấm) */
         #universe {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             perspective: 1000px; opacity: 0; pointer-events: none; transition: opacity 3s ease; z-index: 1;
             display: flex; justify-content: center; align-items: center;
         }
-        #sphereCanvas { position: absolute; z-index: 2; }
-        #galaxy { position: absolute; width: 0; height: 0; transform-style: preserve-3d; animation: spinGalaxy 30s linear infinite; z-index: 3; }
+        #sphereCanvas { position: absolute; z-index: 2; pointer-events: none; }
+        #galaxy { position: absolute; width: 0; height: 0; transform-style: preserve-3d; animation: spinGalaxy 30s linear infinite; z-index: 3; pointer-events: none; }
         
         @keyframes spinGalaxy {
             0% { transform: rotateX(-10deg) rotateY(0deg); }
@@ -73,24 +77,118 @@
         let yesSize = 20; let paddingV = 15; let paddingH = 30;
         let isMusicPlaying = false;
 
-        // MẸO ÉP PHÁT NHẠC: Bật nhạc ngay khi có bất kỳ tương tác nào trên màn hình
         function startMusic() {
             if (!isMusicPlaying) {
                 audio.play().then(() => {
                     isMusicPlaying = true;
-                }).catch(err => console.log("Trình duyệt vẫn đang chờ tương tác...", err));
+                }).catch(err => console.log("Trình duyệt chặn nhạc, đợi bấm nút...", err));
             }
         }
 
-        // Chỉ cần click chuột bừa, lướt qua hoặc chạm nhẹ vào màn hình là nhạc sẽ cố gắng kích hoạt
         document.body.addEventListener('click', startMusic);
         document.body.addEventListener('touchstart', startMusic);
 
-        // Nút Không bỏ chạy
+        // Code làm nút Không bỏ chạy (Fix lỗi đè nút bằng position: fixed)
         function moveNoButton() {
-            startMusic(); // Lúc rê chuột vào nút Không là lén bật nhạc luôn
-            btnNo.style.position = 'absolute';
-            const maxX = window.innerWidth - btnNo.clientWidth - 50;
-            const maxY = window.innerHeight -
-        
-      
+            startMusic();
+            btnNo.style.position = 'fixed';
+            const maxX = window.innerWidth - btnNo.clientWidth - 20;
+            const maxY = window.innerHeight - btnNo.clientHeight - 20;
+            btnNo.style.left = Math.max(10, Math.floor(Math.random() * maxX)) + 'px';
+            btnNo.style.top = Math.max(10, Math.floor(Math.random() * maxY)) + 'px';
+
+            yesSize += 6; paddingV += 3; paddingH += 6;
+            btnYes.style.fontSize = yesSize + 'px';
+            btnYes.style.padding = paddingV + 'px ' + paddingH + 'px';
+        }
+
+        btnNo.addEventListener('mouseover', moveNoButton);
+        btnNo.addEventListener('touchstart', moveNoButton);
+
+        // Vẽ quả cầu hạt 3D
+        function createParticleSphere() {
+            const canvas = document.getElementById('sphereCanvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const numParticles = 1200; 
+            const sphereRadius = 140; 
+
+            for(let i = 0; i < numParticles; i++) {
+                let phi = Math.acos(-1 + (2 * i) / numParticles);
+                let theta = Math.sqrt(numParticles * Math.PI) * phi;
+                particles.push({
+                    x: sphereRadius * Math.cos(theta) * Math.sin(phi),
+                    y: sphereRadius * Math.sin(theta) * Math.sin(phi),
+                    z: sphereRadius * Math.cos(phi)
+                });
+            }
+
+            let angleX = 0; let angleY = 0;
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                angleY += 0.005; angleX += 0.002;
+
+                particles.forEach(p => {
+                    let x1 = p.x * Math.cos(angleY) - p.z * Math.sin(angleY);
+                    let z1 = p.z * Math.cos(angleY) + p.x * Math.sin(angleY);
+                    let y2 = p.y * Math.cos(angleX) - z1 * Math.sin(angleX);
+                    let z2 = z1 * Math.cos(angleX) + p.y * Math.sin(angleX);
+
+                    let scale = 250 / (250 + z2);
+                    let x2d = canvas.width/2 + x1 * scale;
+                    let y2d = canvas.height/2 + y2 * scale;
+
+                    ctx.beginPath();
+                    ctx.arc(x2d, y2d, 1.5 * scale, 0, 2 * Math.PI);
+                    ctx.fillStyle = `rgba(196, 113, 237, ${scale})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // KHI BẤM NÚT CÓ (Đã nâng cấp độ nhạy)
+        function acceptLove(e) {
+            e.preventDefault(); // Ngăn lỗi double-click trên điện thoại
+            startMusic();
+            
+            text.innerHTML = "Chúc Thảo 8/3 luôn vui vẻ, rạng rỡ và ngập tràn hạnh phúc. Tỏa sáng như một thiên hà nhé! 🥰";
+            image.style.display = 'none'; 
+            document.querySelector('.btn-group').style.display = 'none';
+
+            document.body.classList.add('space-mode');
+            universe.style.opacity = '1';
+
+            createParticleSphere();
+
+            const imgSrcs = ['1.jpg.png', '2.jpg.png', '3.jpg.png', '4.jpg.png', '5.jpg', '6.jpg'];
+            for(let i = 0; i < 100; i++) {
+                let img = document.createElement('img');
+                img.src = imgSrcs[i % imgSrcs.length];
+                img.className = 'star-img';
+
+                let size = Math.random() > 0.8 ? 60 : (Math.random() > 0.5 ? 45 : 30);
+                img.style.width = size + 'px';
+                img.style.height = (size * 1.2) + 'px'; 
+                img.style.marginLeft = -(size/2) + 'px';
+                img.style.marginTop = -(size/2) + 'px';
+
+                let angle = Math.random() * 360; 
+                let radius = 300 + Math.random() * 400; 
+                let height = (Math.random() - 0.5) * 150; 
+                let tiltX = (Math.random() - 0.5) * 60;
+                let tiltY = (Math.random() - 0.5) * 60;
+
+                img.style.transform = `rotateY(${angle}deg) translateZ(${radius}px) translateY(${height}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+                galaxy.appendChild(img);
+            }
+        }
+
+        // Gắn cả 2 sự kiện click chuột và chạm tay để đảm bảo siêu nhạy
+        btnYes.addEventListener('click', acceptLove);
+        btnYes.addEventListener('touchstart', acceptLove, {passive: false});
+
+    </script>
+</body>
+</html>
